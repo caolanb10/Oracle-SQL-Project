@@ -101,6 +101,8 @@ BEGIN
 NEW.bookingTime := today_date;
 END;
 
+INSERT INTO TABLE booking(booking_id, booking_name, employee) values(booking_seq.nextval, 'wedding transport, Swords', 0149);
+
 CREATE VIEW vehicle_location AS
 SELECT vehicle.year, vehicle.county, vehicle.plateNumber, booking.booking_name
 FROM vehicle
