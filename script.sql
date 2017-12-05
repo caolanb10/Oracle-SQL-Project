@@ -7,17 +7,16 @@ CREATE TABLE employee( employee_id int NOT NULL PRIMARY KEY,
 			 							 	 phoneNumber int,
 											 addressHouse varchar(255),
 											 addressStreet varchar(255),
-											 addressTown varchar(255) );
+											 addressTown varchar(255),
+										   IBAN varchar(255));
 
+CREATE TABLE payslip_amount(id int,
+														week int,
+														amount int,
+														PRIMARY KEY(id, week),
+														FOREIGN KEY(id) REFERENCES employee(employee_id)
+													);
 
-CREATE TABLE payslip( id int,
-											employee_name varchar(255),
-											week DATE,
-											week_no int,
-											amount decimal (18,2),
-											IBAN varchar(255),
-											PRIMARY KEY (id, week_no),
-											FOREIGN KEY (id) REFERENCES employee(employee_id));
 CREATE SEQUENCE booking_seq
 MINVALUE 1
 START WITH 1
@@ -55,17 +54,17 @@ CREATE TABLE vehicle(year int NOT NULL,
 										 CONSTRAINT available CHECK ((available = 1 AND booking is NULL) OR (available = 0 AND booking is NOT NULL)),
 										 PRIMARY KEY (year, county, plateNumber));
 
-INSERT INTO employee values(1241, 'Sean', 'Byrne', '10-MAR-2015', 0835216368, '12', 'WoodPark Avenue', 'Castletown');
-INSERT INTO employee values(2310, 'Owen', 'O Byrne', '17-JAN-2014', 0862136729, '26', 'AshPlace', 'Newtown');
-INSERT INTO employee values(6013, 'Killian', 'Costello', '01-FEB-2012', 0892348501, '01', 'Parkview Road', 'Springfield');
-INSERT INTO employee values(0149, 'Robert', 'Stephens', '28-APR-2016', 0854638103, '44', 'CLiffView Road', 'ParkVille');
-INSERT INTO employee values(3219, 'Michael', 'Freeman', '01-DEC-2015', 08695023441, '84', 'Sea Road', 'Oldtown');
+INSERT INTO employee values(1241, 'Sean', 'Byrne', '10-MAR-2015', 0835216368, '12', 'WoodPark Avenue', 'Castletown', 'BOIE3098CD1230');
+INSERT INTO employee values(2310, 'Owen', 'O Byrne', '17-JAN-2014', 0862136729, '26', 'AshPlace', 'Newtown', 'AIB4034CD13405');
+INSERT INTO employee values(6013, 'Killian', 'Costello', '01-FEB-2012', 0892348501, '01', 'Parkview Road', 'Springfield', 'BOIE3098CD1230');
+INSERT INTO employee values(0149, 'Robert', 'Stephens', '28-APR-2016', 0854638103, '44', 'CLiffView Road', 'ParkVille', 'KBCIE6510CO032');
+INSERT INTO employee values(3219, 'Michael', 'Freeman', '01-DEC-2015', 08695023441, '84', 'Sea Road', 'Oldtown', 'EBS10239329103');
 
-INSERT INTO payslip values(1241, 'Sean', '06-NOV-2017', 12, 430.50, 'BOIE3098CD1230');
-INSERT INTO payslip values(2310, 'Owen', '13-SEP-2017', 13, 346.90, 'AIB4034CD13405');
-INSERT INTO payslip values(1241, 'Sean', '13-JAN-2017', 13, 690.50, 'BOIE3098CD1230');
-INSERT INTO payslip values(6013, 'Killian', '27-JUN-2017', 15, 390.90, 'KBCIE6510CO032');
-INSERT INTO payslip values(3219, 'Michael', '06-JUL-2017', 12, 500.00, 'EBS10239329103');
+INSERT INTO payslip_amount values(1241,  12, 430.50);
+INSERT INTO payslip_amount values(2310,  13, 346.90);
+INSERT INTO payslip_amount values(1241,  13, 690.50);
+INSERT INTO payslip_amount values(6013,  15, 390.90);
+INSERT INTO payslip_amount values(3219,  12, 500.00);
 
 INSERT INTO booking values(booking_seq.nextval, '18th birthday party, Howth', 0149);
 INSERT INTO booking values(booking_seq.nextval, 'School tour, Clontarf', 6013);
@@ -109,7 +108,7 @@ INNER JOIN booking
 ON vehicle.booking=booking.booking_id;
 
 CREATE ROLE manager IDENTIFIED by theManager;
-GRANT ALL ON employee, payslip, vehicle, booking, route TO manager;
+GRANT ALL ON employee, payslip_amount, vehicle, booking, route TO manager;
 
 CREATE ROLE bus_driver IDENTIFIED by driver;
 GRANT SELECT ON vehicle_location to bus_driver;
